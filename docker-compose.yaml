@@ -1,0 +1,124 @@
+# docker/docker-compose.yml
+version: '3.9'
+
+networks:
+  database-test:
+  database-dev:
+  database-prod:
+
+services:
+  #Sample
+  chat-service: &chat-service
+    build:
+      context: .
+      dockerfile: ./build/dockerfiles/golang/Dockerfile
+      target: golang
+    env_file:
+      - .env
+    volumes:
+      - ./:/go/src
+  chat-database: &chat-database
+    image: postgres:14.1
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "${DATABASE_DB}_test", "-U", "${DATABASE_USER}_test" ]
+      timeout: 45s
+      interval: 2s
+      retries: 10
+    env_file:
+      - .env
+  #Test
+  chat-service-test:
+    <<: *chat-service
+    container_name: chat-database-test
+    environment:
+      - DATABASE_HOST=chat-database-test
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_USER=${DATABASE_USER}_test
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}_test
+      - DATABASE_DB=${DATABASE_DB}_test
+    build:
+      context: .
+      dockerfile: ./build/dockerfiles/golang/Dockerfile
+      target: golang_test
+    networks:
+      - database-test
+    depends_on:
+      chat-database-test:
+        condition: service_healthy
+  chat-database-test:
+    <<: *chat-database
+    container_name: chat-database-test
+    environment:
+      - POSTGRES_USER=${DATABASE_USER}_test
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}_test
+      - POSTGRES_DB=${DATABASE_DB}_test
+    volumes:
+      - chat-database-test:/var/lib/postgresql/data:delegated
+    networks:
+      - database-test
+  #dev
+  chat-service-dev:
+    <<: *chat-service
+    container_name: chat-database-dev
+    environment:
+      - DATABASE_HOST=chat-database-dev
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_USER=${DATABASE_USER}_dev
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}_dev
+      - DATABASE_DB=${DATABASE_DB}_dev
+    build:
+      context: .
+      dockerfile: ./build/dockerfiles/golang/Dockerfile
+      target: golang_dev
+    networks:
+      - database-dev
+    depends_on:
+      chat-database-dev:
+        condition: service_healthy
+  chat-database-dev:
+    <<: *chat-database
+    container_name: chat-database-dev
+    environment:
+      - POSTGRES_USER=${DATABASE_USER}_dev
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}_dev
+      - POSTGRES_DB=${DATABASE_DB}_dev
+    volumes:
+      - chat-database-dev:/var/lib/postgresql/data:delegated
+    networks:
+      - database-dev
+  #prod
+  chat-service-prod:
+    <<: *chat-service
+    container_name: chat-database-prod
+    environment:
+      - DATABASE_HOST=chat-database-prod
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_USER=${DATABASE_USER}_prod
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}_prod
+      - DATABASE_DB=${DATABASE_DB}_prod
+    build:
+      context: .
+      dockerfile: ./build/dockerfiles/golang/Dockerfile
+      target: golang_prod
+    networks:
+      - database-prod
+    depends_on:
+      chat-database-prod:
+        condition: service_healthy
+  chat-database-prod:
+    <<: *chat-database
+    container_name: chat-database-prod
+    environment:
+      - POSTGRES_USER=${DATABASE_USER}_prod
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}_prod
+      - POSTGRES_DB=${DATABASE_DB}_prod
+    volumes:
+      - chat-database-prod:/var/lib/postgresql/data:delegated
+    networks:
+      - database-prod
+
+
+volumes:
+  chat-database-test: { }
+  chat-database-dev: { }
+  chat-database-prod: { }

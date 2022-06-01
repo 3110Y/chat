@@ -6,8 +6,8 @@ vendor:
 tidy:
 	go mod tidy
 
-.PHONY: test
-test:
+.PHONY: test-local
+test-local:
 	go test -mod=vendor ./...
 
 .PHONY: cover
@@ -24,12 +24,12 @@ build:
 
 .PHONY: test
 test:
-	docker-compose run chat-service-test
+	docker-compose run --rm chat-service-test
 
 .PHONY: dev
 dev:
-	docker-compose run chat-service-dev
+	docker-compose run --rm chat-service-dev
 
 .PHONY: prod
 prod:
-	docker-compose run chat-service-prod
+	docker-compose run --rm chat-service-prod

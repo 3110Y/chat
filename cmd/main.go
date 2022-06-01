@@ -1,13 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
-	"os"
 )
 
 func main() {
-	appPort := os.Getenv("APP_PORT")
 	//databaseUser := os.Getenv("DATABASE_USER")
 	//databasePassword := os.Getenv("DATABASE_PASSWORD")
 	//databaseHost := os.Getenv("DATABASE_HOST")
@@ -27,10 +26,11 @@ func main() {
 	//if err != nil {
 	//	log.Fatalln(err)
 	//}
-	http.HandleFunc("/test", handler)
-	log.Fatal(http.ListenAndServe("localhost:"+appPort, nil))
+	http.HandleFunc("/", handler)
+	log.Fatal(http.ListenAndServe(":3000", nil))
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	_, _ = w.Write([]byte("Hi!"))
+	fmt.Fprintf(w, "URL.Path = %q\n", r.URL.Path)
+	log.Print("URL.Path5 = %q\n", r.URL.Path)
 }

@@ -10,7 +10,7 @@ services:
   #Sample
   chat-service: &chat-service
     ports:
-      - "8080:8080"
+      - "3000:3000"
     build:
       context: .
       dockerfile: ./build/dockerfiles/golang/Dockerfile
@@ -76,9 +76,9 @@ services:
       target: golang_dev
     networks:
       - database-dev
-    depends_on:
-      chat-database-dev:
-        condition: service_healthy
+#    depends_on:
+#      chat-database-dev:
+#        condition: service_healthy
   chat-database-dev:
     <<: *chat-database
     container_name: chat-database-dev

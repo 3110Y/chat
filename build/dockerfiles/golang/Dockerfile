@@ -25,6 +25,7 @@ ENTRYPOINT go test -v ./...
 # Development image
 # ------------------------------------------------------------------------------
 FROM golang AS golang_dev
+EXPOSE 3000
 ENTRYPOINT go run cmd/main.go
 
 # ------------------------------------------------------------------------------
@@ -40,5 +41,5 @@ RUN chmod +x $GOPATH/bin/main
 # ------------------------------------------------------------------------------
 FROM alpine:3.7 as golang_prod
 COPY --from=golang_build /go/bin/ ./
-EXPOSE ${APP_PORT}
-CMD ["./main"]
+EXPOSE 3000
+ENTRYPOINT ["./main"]

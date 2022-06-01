@@ -14,22 +14,22 @@ test:
 cover:
 	go test -coverprofile="coverage.out" ./... && go tool cover -html="coverage.out"
 
-.PHONY: docker-down
-docker-down:
+.PHONY: down
+down:
 	docker-compose down
 
-.PHONY: docker-build
-docker-build:
+.PHONY: build
+build:
 	docker-compose build
 
-.PHONY: docker-test
-docker-test:
+.PHONY: test
+test:
 	docker-compose run chat-service-test
 
-.PHONY: docker-dev
-docker-dev:
+.PHONY: dev
+dev:
 	docker-compose run chat-service-dev
 
-.PHONY: docker-prod
-docker-prod:
+.PHONY: prod
+prod:
 	docker-compose run chat-service-prod

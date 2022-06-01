@@ -9,7 +9,7 @@ ENV UID=${UID}
 ENV GID=${GID}
 RUN getent passwd $UID || (groupadd --gid $GID user && useradd --uid $UID --gid user --shell /bin/bash --create-home user)
 USER $UID
-WORKDIR $GOPATH
+WORKDIR $GOPATH/src
 COPY . $GOPATH/src
 ENV GO111MODULE="on" \
     GOOS=linux
@@ -25,20 +25,20 @@ ENTRYPOINT go test -v ./...
 # Development image
 # ------------------------------------------------------------------------------
 FROM golang AS golang_dev
-ENTRYPOINT go run ./cmd/main.go
+ENTRYPOINT go run cmd/main.go
 
 # ------------------------------------------------------------------------------
 # Build image
 # ------------------------------------------------------------------------------
-FROM golang_dev AS golang_build
-RUN go build -mod=vendor -o ./build/bin/main ./cmd/main.go
-RUN chmod +x ./build/bin/main
+FROM golang AS golang_build
+RUN go build -mod=vendor -o $GOPATH/bin/main $GOPATH/src/cmd/main.go
+RUN chmod +x $GOPATH/bin/main
 
 
 # ------------------------------------------------------------------------------
 # Production image
 # ------------------------------------------------------------------------------
 FROM alpine:3.7 as golang_prod
-COPY --from=golang_build /go/build/bin/ ./
+COPY --from=golang_build /go/bin/ ./
 EXPOSE ${APP_PORT}
 CMD ["./main"]

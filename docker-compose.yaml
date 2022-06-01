@@ -9,6 +9,8 @@ networks:
 services:
   #Sample
   chat-service: &chat-service
+    ports:
+      - "8080:8080"
     build:
       context: .
       dockerfile: ./build/dockerfiles/golang/Dockerfile
@@ -18,6 +20,8 @@ services:
     volumes:
       - ./:/go/src
   chat-database: &chat-database
+    ports:
+      - "5433:5432"
     image: postgres:14.1
     healthcheck:
       test: [ "CMD", "pg_isready", "-q", "-d", "${DATABASE_DB}_test", "-U", "${DATABASE_USER}_test" ]

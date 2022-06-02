@@ -15,18 +15,26 @@ ENV GO111MODULE="on" \
     GOOS=linux
 
 # ------------------------------------------------------------------------------
+# Build image no optimizations
+# ------------------------------------------------------------------------------
+FROM golang AS golang_build_no_optimizations
+RUN go build -mod=vendor -o $GOPATH/bin/main_no_optimizations $GOPATH/src/cmd/main.go
+RUN chmod +x $GOPATH/bin/main_no_optimizations
+
+# ------------------------------------------------------------------------------
 # Test image
 # ------------------------------------------------------------------------------
-FROM golang AS golang_test
+FROM golang_build_no_optimizations AS golang_test
 WORKDIR $GOPATH/src
 ENTRYPOINT go test -v ./...
 
 # ------------------------------------------------------------------------------
 # Development image
 # ------------------------------------------------------------------------------
-FROM golang AS golang_dev
+FROM golang_build_no_optimizations AS golang_dev
+RUN go install github.com/go-delve/delve/cmd/dlv@v1.8.3
 EXPOSE 3000
-ENTRYPOINT go run cmd/main.go
+ENTRYPOINT $GOPATH/bin/dlv --listen=:2345 --headless=true --api-version=2 --accept-multiclient exec $GOPATH/bin/main_no_optimizations
 
 # ------------------------------------------------------------------------------
 # Build image
@@ -34,7 +42,6 @@ ENTRYPOINT go run cmd/main.go
 FROM golang AS golang_build
 RUN go build -mod=vendor -o $GOPATH/bin/main $GOPATH/src/cmd/main.go
 RUN chmod +x $GOPATH/bin/main
-
 
 # ------------------------------------------------------------------------------
 # Production image

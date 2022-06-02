@@ -1,7 +1,33 @@
-GET http://localhost:3000/test/fhfhfghgf
+
+GET http://localhost:3000
+Content-Type: application/json
 
 ###
-GET http://localhost:3000
+GET http://localhost:3000/fhfhfghgf
+Content-Type: application/json
+
+###
+GET http://localhost:3000/test
+Content-Type: application/json
+
+###
+GET http://localhost:3000/test/dfbbfbf
+Content-Type: application/json
+
+###
+GET http://localhost:3000/about$
+Content-Type: application/json
+
+###
+GET http://localhost:3000/about
+Content-Type: application/json
+
+###
+GET http://localhost:3000/about/dvdfbfdbfgb
+Content-Type: application/json
+
+###
+GET http://localhost:3000/about/dvdfbfdbfgb
 Content-Type: application/json
 
 ###

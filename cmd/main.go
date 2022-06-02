@@ -6,6 +6,8 @@ import (
 	"net/http"
 )
 
+var a = 3
+
 func main() {
 	//databaseUser := os.Getenv("DATABASE_USER")
 	//databasePassword := os.Getenv("DATABASE_PASSWORD")
@@ -26,11 +28,24 @@ func main() {
 	//if err != nil {
 	//	log.Fatalln(err)
 	//}
+	a++
+	fmt.Println(a)
 	http.HandleFunc("/", handler)
+	http.HandleFunc("/test", handlerTwo)
+	http.HandleFunc("/about$", handlerThree)
 	log.Fatal(http.ListenAndServe(":3000", nil))
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "URL.Path = %q\n", r.URL.Path)
-	log.Print("URL.Path5 = %q\n", r.URL.Path)
+	a++
+	fmt.Println(a)
+	fmt.Fprintf(w, "URL.Path = %q 404 handler\n", r.URL.Path)
+}
+
+func handlerTwo(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "URL.Path = %q 200 handlerTwo\n", r.URL.Path)
+}
+
+func handlerThree(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "URL.Path = %q 200 handlerThree\n", r.URL.Path)
 }

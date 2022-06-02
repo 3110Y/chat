@@ -64,6 +64,9 @@ services:
   chat-service-dev:
     <<: *chat-service
     container_name: chat-service-dev
+    ports:
+      - "3000:3000"
+      - "2345:2345"
     environment:
       - DATABASE_HOST=chat-database-dev
       - DATABASE_PORT=${DATABASE_PORT}
@@ -76,9 +79,9 @@ services:
       target: golang_dev
     networks:
       - database-dev
-    depends_on:
-      chat-database-dev:
-        condition: service_healthy
+#    depends_on:
+#      chat-database-dev:
+#        condition: service_healthy
   chat-database-dev:
     <<: *chat-database
     container_name: chat-database-dev

@@ -1,12 +1,9 @@
 package main
 
 import (
-	"fmt"
+	"github.com/gin-gonic/gin"
 	"log"
-	"net/http"
 )
-
-var a = 3
 
 func main() {
 	//databaseUser := os.Getenv("DATABASE_USER")
@@ -28,24 +25,11 @@ func main() {
 	//if err != nil {
 	//	log.Fatalln(err)
 	//}
-	a++
-	fmt.Println(a)
-	http.HandleFunc("/", handler)
-	http.HandleFunc("/test", handlerTwo)
-	http.HandleFunc("/about$", handlerThree)
-	log.Fatal(http.ListenAndServe(":3000", nil))
-}
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	a++
-	fmt.Println(a)
-	fmt.Fprintf(w, "URL.Path = %q 4046 handler\n", r.URL.Path)
-}
-
-func handlerTwo(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "URL.Path = %q 200 handlerTwo\n", r.URL.Path)
-}
-
-func handlerThree(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "URL.Path = %q 200 handlerThree\n", r.URL.Path)
+	r := gin.Default()
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "pong",
+		})
+	})
+	log.Fatal(r.Run(":3000"))
 }

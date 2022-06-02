@@ -24,12 +24,12 @@ build:
 
 .PHONY: test
 test:
-	docker-compose run --rm chat-service-test
+	docker-compose up chat-service-test
 
 .PHONY: dev
 dev:
-	docker-compose run --rm chat-service-dev
+	docker-compose up chat-service-dev
 
 .PHONY: prod
 prod:
-	docker-compose run --rm chat-service-prod
+	docker-compose up chat-service-prod

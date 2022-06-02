@@ -1,5 +1,5 @@
 # docker/docker-compose.yml
-version: '3.9'
+version: '3.8'
 
 networks:
   database-test:
@@ -33,7 +33,7 @@ services:
   #Test
   chat-service-test:
     <<: *chat-service
-    container_name: chat-database-test
+    container_name: chat-service-test
     environment:
       - DATABASE_HOST=chat-database-test
       - DATABASE_PORT=${DATABASE_PORT}
@@ -63,7 +63,7 @@ services:
   #dev
   chat-service-dev:
     <<: *chat-service
-    container_name: chat-database-dev
+    container_name: chat-service-dev
     environment:
       - DATABASE_HOST=chat-database-dev
       - DATABASE_PORT=${DATABASE_PORT}
@@ -76,9 +76,9 @@ services:
       target: golang_dev
     networks:
       - database-dev
-#    depends_on:
-#      chat-database-dev:
-#        condition: service_healthy
+    depends_on:
+      chat-database-dev:
+        condition: service_healthy
   chat-database-dev:
     <<: *chat-database
     container_name: chat-database-dev
@@ -93,7 +93,7 @@ services:
   #prod
   chat-service-prod:
     <<: *chat-service
-    container_name: chat-database-prod
+    container_name: chat-service-prod
     environment:
       - DATABASE_HOST=chat-database-prod
       - DATABASE_PORT=${DATABASE_PORT}

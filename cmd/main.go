@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/3110Y/chat/pkg/user"
+	"github.com/3110Y/chat/pkg/user/usermigration"
+	"github.com/3110Y/migrator"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 	"log"
@@ -30,6 +32,15 @@ func main() {
 		log.Fatalln(err)
 	}
 	r := gin.Default()
+	m := migrator.NewMigrator(migrator.NewDbSqlx(db))
+	err = m.AddMigration(usermigration.Migration20220606())
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = m.MigrationUp()
+	if err != nil {
+		log.Fatalln(err)
+	}
 	userRepository := user.NewUserRepository(db)
 	userService := user.NewUserService(userRepository)
 	userRest := user.NewRest(userService)
